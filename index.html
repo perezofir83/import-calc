@@ -19,6 +19,8 @@
   header h1{margin:0;font-size:19px;font-weight:700}
   header p{margin:3px 0 0;font-size:13px;opacity:.85}
   .wrap{max-width:560px;margin:0 auto;padding:16px}
+  .curbar{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:4px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
   .card h2{margin:0 0 12px;font-size:15px;color:var(--accent2);font-weight:700;letter-spacing:.3px}
   label{display:block;font-size:14px;color:var(--muted);margin:12px 0 5px}
@@ -45,15 +47,14 @@
   .v-ok{background:#33290c;color:var(--amber);border:1px solid var(--amber)}
   .v-bad{background:#3a1512;color:var(--red);border:1px solid var(--red)}
   .chip{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:20px;
-    padding:5px 12px;font-size:13px;margin:4px 4px 0 0;cursor:pointer}
-  .chip.sel{background:var(--accent);border-color:var(--accent2);color:#fff}
+    padding:7px 14px;font-size:14px;margin:2px;cursor:pointer;user-select:none}
+  .chip.sel{background:var(--accent);border-color:var(--accent2);color:#fff;font-weight:700}
   details{margin-top:6px}
   summary{cursor:pointer;color:var(--muted);font-size:14px;padding:8px 0}
   .adv label{margin-top:8px}
   .note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
   .warn{background:var(--yellowbg);border:1px solid var(--amber);border-radius:10px;padding:10px 12px;
     font-size:13px;color:var(--yellow);margin-top:10px}
-  /* gate */
   #gate{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;align-items:center;justify-content:center;padding:24px}
   #gate .box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:26px;max-width:340px;width:100%;text-align:center}
   #gate .e{font-size:44px}
@@ -79,10 +80,17 @@
 
 <header>
   <h1>מחשבון יבוא — מקסיקו → ישראל ☕🧶💡</h1>
-  <p>עלות נחיתה ליחידה בשקלים · בזמן אמת ליד הספק</p>
+  <p>עלות נחיתה ליחידה · בזמן אמת ליד הספק</p>
 </header>
 
 <div class="wrap">
+
+  <div class="curbar">
+    <span class="muted" style="font-size:14px">מטבע התצוגה:</span>
+    <span class="chip cur sel" data-cur="ILS">₪ שקל</span>
+    <span class="chip cur" data-cur="USD">$ דולר</span>
+    <span class="chip cur" data-cur="MXN">פזו MXN</span>
+  </div>
 
   <div class="card">
     <h2>① סוג המוצר</h2>
@@ -104,10 +112,10 @@
     <label>שם המוצר</label>
     <input id="pname" type="text" placeholder="למשל: כוס הפוך סדרת אדמה">
     <div class="row2">
-      <div><label>מחיר מפעל ליחידה (פזו MXN)</label><input id="price" type="number" step="1" value="80" inputmode="decimal"></div>
+      <div><label id="lbl_price">מחיר מפעל ליחידה</label><input id="price" type="number" step="0.1" value="15.2" inputmode="decimal"></div>
       <div><label>כמות יחידות</label><input id="qty" type="number" step="10" value="1000" inputmode="numeric"></div>
     </div>
-    <label>מחיר מכירה מתוכנן לצרכן בישראל (₪)</label>
+    <label id="lbl_sell">מחיר מכירה מתוכנן לצרכן</label>
     <input id="sell" type="number" step="1" value="49" inputmode="decimal">
   </div>
 
@@ -137,28 +145,30 @@
     <details class="adv">
       <summary>פתח לעריכת שערים ותעריפים ▾</summary>
       <div class="row2">
-        <div><label>שער פזו→₪</label><input id="fx" type="number" step="0.001" value="0.19"></div>
+        <div><label>שער דולר → ₪</label><input id="fxUSD" type="number" step="0.01" value="3.7"></div>
+        <div><label>שער פזו → ₪</label><input id="fxMXN" type="number" step="0.001" value="0.19"></div>
+      </div>
+      <div class="row2">
         <div><label>מע"מ %</label><input id="vat" type="number" step="1" value="18"></div>
+        <div><label>מכס % (0 עם EUR.1)</label><input id="duty" type="number" step="1" value="0"></div>
       </div>
       <label><input type="checkbox" id="vatreclaim" style="width:auto;margin-left:6px"> אני מקזז מע"מ (עוסק ישראלי) — הורד מע"מ מהעלות</label>
       <div class="row2">
-        <div><label>מכס % (0 עם EUR.1)</label><input id="duty" type="number" step="1" value="0"></div>
         <div><label>ביטוח %</label><input id="ins" type="number" step="0.5" value="1"></div>
+        <div><label id="lbl_airkg">אווירי /ק"ג</label><input id="airkg" type="number" step="1" value="28"></div>
       </div>
       <div class="row2">
-        <div><label>אווירי ₪/ק"ג</label><input id="airkg" type="number" step="1" value="28"></div>
-        <div><label>מכולה 20ft (₪)</label><input id="fcl20" type="number" step="500" value="16500"></div>
-      </div>
-      <div class="row2">
-        <div><label>LCL עמלה קבועה (₪)</label><input id="lclfix" type="number" step="100" value="1700"></div>
-        <div><label>LCL ₪/CBM</label><input id="lclcbm" type="number" step="10" value="550"></div>
+        <div><label id="lbl_lclfix">LCL עמלה קבועה</label><input id="lclfix" type="number" step="100" value="1700"></div>
+        <div><label id="lbl_lclcbm">LCL /CBM</label><input id="lclcbm" type="number" step="10" value="550"></div>
       </div>
       <div class="note" style="margin:2px 0 0">LCL = עמלה קבועה (רצפה ~$450: deconsolidation+THC+מסמכים) + לפי CBM. משלוחים קטנים יקרים יחסית — זו אמת השוק.</div>
       <div class="row2">
+        <div><label id="lbl_fcl20">מכולה 20ft</label><input id="fcl20" type="number" step="500" value="16500"></div>
         <div><label>נפח שמיש 20ft (CBM)</label><input id="fcl20cbm" type="number" step="1" value="28"></div>
-        <div><label>עלויות קבועות למשלוח (₪)</label><input id="fixed" type="number" step="100" value="3000"></div>
       </div>
-      <div class="note">קבוע = עמיל מכס + אגרות נמל + הובלה מקומית + despacho מקסיקו. מספרים אלו הערכות אוגוסט 2026 — תעריפי ים תנודתיים (+77% שנתי). אמת מול הצעת מחיר.</div>
+      <label id="lbl_fixed">עלויות קבועות למשלוח</label>
+      <input id="fixed" type="number" step="100" value="3000">
+      <div class="note">קבוע = עמיל מכס + אגרות נמל + הובלה מקומית + despacho מקסיקו. הערכות אוגוסט 2026 — תעריפי ים תנודתיים (+77% שנתי). אמת מול הצעת מחיר.</div>
     </details>
     <div class="warn" id="taxwarn"></div>
   </div>
@@ -181,7 +191,43 @@ function tryPw(){
 document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryPw();});
 if(sessionStorage.getItem('ok')==='1')document.getElementById('gate').style.display='none';
 
-// ====== presets ======
+const $=id=>document.getElementById(id);
+const num=id=>parseFloat($(id).value)||0;
+
+// ====== currency ======
+const SYM={ILS:'₪',USD:'$',MXN:'פזו'};
+let cur='ILS';
+function rate(c){ if(c==='USD')return num('fxUSD')||3.7; if(c==='MXN')return num('fxMXN')||0.19; return 1; } // ₪ per unit
+const toIls=v=>v*rate(cur);
+function money(ils,dec){
+  const v=ils/rate(cur);
+  const s=v.toLocaleString('he',{maximumFractionDigits:dec||0});
+  return cur==='MXN' ? (s+' פזו') : (SYM[cur]+s);
+}
+const MON=['price','sell','airkg','lclfix','lclcbm','fcl20','fixed'];
+function unit(){ return cur==='MXN'?'פזו':SYM[cur]; }
+function renderLabels(){
+  const u=unit();
+  const set=(id,t)=>{const e=$(id);if(e)e.textContent=t;};
+  set('lbl_price','מחיר מפעל ליחידה ('+u+')');
+  set('lbl_sell','מחיר מכירה מתוכנן לצרכן ('+u+')');
+  set('lbl_airkg','אווירי '+u+'/ק"ג');
+  set('lbl_lclfix','LCL עמלה קבועה ('+u+')');
+  set('lbl_lclcbm','LCL '+u+'/CBM');
+  set('lbl_fcl20','מכולה 20ft ('+u+')');
+  set('lbl_fixed','עלויות קבועות ('+u+')');
+}
+function setCur(c){
+  if(c===cur) return;
+  const rOld=rate(cur), rNew=(c==='USD'?(num('fxUSD')||3.7):c==='MXN'?(num('fxMXN')||0.19):1);
+  MON.forEach(id=>{const el=$(id); const vIls=(parseFloat(el.value)||0)*rOld; el.value=+(vIls/rNew).toFixed(3);});
+  cur=c;
+  document.querySelectorAll('.chip.cur').forEach(x=>x.classList.toggle('sel',x.dataset.cur===c));
+  renderLabels(); calc();
+}
+document.querySelectorAll('.chip.cur').forEach(ch=>ch.addEventListener('click',()=>setCur(ch.dataset.cur)));
+
+// ====== presets ====== (pack = packaging cost per unit, in PESOS)
 const PRODUCTS = {
   cups:    {name:'כוסות קרמיקה', emoji:'☕', kg:0.8, liter:2.5, brk:12, pack:15},
   rug:     {name:'שטיח',        emoji:'🧶', kg:12,  liter:50,  brk:2,  pack:60},
@@ -192,22 +238,16 @@ const PRODUCTS = {
 };
 let curProd='cups', shipMode='auto';
 
-const $=id=>document.getElementById(id);
-const num=id=>parseFloat($(id).value)||0;
-const ils=v=>'₪'+v.toLocaleString('he',{maximumFractionDigits:0});
-const ils1=v=>'₪'+v.toLocaleString('he',{maximumFractionDigits:1});
-
-const grid=document.getElementById('prodgrid');
+const grid=$('prodgrid');
 Object.entries(PRODUCTS).forEach(([k,p])=>{
   const d=document.createElement('div');
   d.className='prod'+(k==='cups'?' sel':'');
   d.dataset.k=k;
-  d.innerHTML=`<span class="e">${p.emoji}</span>${p.name}`;
+  d.innerHTML='<span class="e">'+p.emoji+'</span>'+p.name;
   d.onclick=()=>{curProd=k;document.querySelectorAll('.prod').forEach(x=>x.classList.remove('sel'));
-    d.classList.add('sel');document.getElementById('customfields').style.display=p.custom?'block':'none';calc();};
+    d.classList.add('sel');$('customfields').style.display=p.custom?'block':'none';calc();};
   grid.appendChild(d);
 });
-
 function setShip(m){shipMode=m;document.querySelectorAll('.chip[data-ship]').forEach(c=>
   c.classList.toggle('sel',c.dataset.ship===m));calc();}
 setShip('auto');
@@ -216,22 +256,30 @@ function calc(){
   const p=PRODUCTS[curProd];
   let kg=p.kg, liter=p.liter, brk=p.brk, pack=p.pack;
   if(p.custom){kg=num('c_kg');liter=num('c_liter');brk=num('c_brk');pack=num('c_pack');}
-  const fx=num('fx'), qty=num('qty'), price=num('price'), sell=num('sell');
+  const qty=num('qty');
   const vatPct=num('vat')/100, dutyPct=num('duty')/100, insPct=num('ins')/100;
-  const airkg=num('airkg'), lclcbm=num('lclcbm'), lclfix=num('lclfix');
-  const fcl20=num('fcl20'), fcl20cbm=num('fcl20cbm'), fixed=num('fixed');
   const reclaim=$('vatreclaim').checked;
+  const fxMXN=num('fxMXN')||0.19;
+  // monetary inputs -> ILS
+  const priceIls=toIls(num('price'));
+  const sellIls=toIls(num('sell'));
+  const airkgIls=toIls(num('airkg'));
+  const lclfixIls=toIls(num('lclfix'));
+  const lclcbmIls=toIls(num('lclcbm'));
+  const fcl20Ils=toIls(num('fcl20'));
+  const fixedIls=toIls(num('fixed'));
+  const fcl20cbm=num('fcl20cbm');
+  const packIls=pack*fxMXN; // packaging assumption stays peso-based
 
   const totKg=qty*kg;
   const totCbm=qty*liter/1000;
-  // source (Mexico)
-  const sourceIls=(price*qty + pack*qty)*fx;
-  // shipping options
-  const airChargeable=Math.max(totKg, totCbm*166.67); // volumetric /6000
-  const airCost=airChargeable*airkg;
-  const lclCost=lclfix + totCbm*lclcbm;
+  const sourceIls=priceIls*qty + packIls*qty;
+
+  const airChargeable=Math.max(totKg, totCbm*166.67);
+  const airCost=airChargeable*airkgIls;
+  const lclCost=lclfixIls + totCbm*lclcbmIls;
   const containers=Math.max(1, Math.ceil(totCbm/fcl20cbm));
-  const fclCost=containers*fcl20;
+  const fclCost=containers*fcl20Ils;
   const opts={air:airCost, lcl:lclCost, fcl:fclCost};
   let mode=shipMode;
   if(mode==='auto'){mode=Object.keys(opts).reduce((a,b)=>opts[a]<opts[b]?a:b);}
@@ -241,54 +289,50 @@ function calc(){
   const cif=sourceIls+shipping+insurance;
   const duty=cif*dutyPct;
   const vat=reclaim?0:(cif+duty)*vatPct;
-  const total=cif+duty+vat+fixed;
+  const total=cif+duty+vat+fixedIls;
   const goodUnits=qty*(1-brk/100);
   const perUnit=goodUnits>0?total/goodUnits:0;
 
-  $('perunit').textContent=ils1(perUnit);
-  $('persub').textContent=`${Math.round(goodUnits)} יח' תקינות · השקעה ${ils(total)}`;
+  $('perunit').textContent=money(perUnit,1);
+  $('persub').textContent=Math.round(goodUnits)+' יח\' תקינות · השקעה '+money(total);
 
-  // verdict
-  const profit=sell-perUnit, margin=sell>0?profit/sell:0;
+  const profit=sellIls-perUnit, margin=sellIls>0?profit/sellIls:0;
   const vd=$('verdict');
-  if(sell<=0){vd.className='verdict v-ok';vd.textContent='הכנס מחיר מכירה לבדיקת רווחיות';}
-  else if(margin>=0.45){vd.className='verdict v-good';vd.innerHTML=`✅ רלוונטי! רווח ${ils1(profit)}/יח' · מרווח ${Math.round(margin*100)}%`;}
-  else if(margin>=0.25){vd.className='verdict v-ok';vd.innerHTML=`⚠️ גבולי · רווח ${ils1(profit)}/יח' · מרווח ${Math.round(margin*100)}%`;}
-  else if(margin>0){vd.className='verdict v-bad';vd.innerHTML=`🔻 מרווח דק מדי · רווח ${ils1(profit)}/יח' · ${Math.round(margin*100)}%`;}
-  else{vd.className='verdict v-bad';vd.innerHTML=`❌ הפסד! עלות ${ils1(perUnit)} > מחיר ${ils1(sell)}`;}
+  if(sellIls<=0){vd.className='verdict v-ok';vd.textContent='הכנס מחיר מכירה לבדיקת רווחיות';}
+  else if(margin>=0.45){vd.className='verdict v-good';vd.innerHTML='✅ רלוונטי! רווח '+money(profit,1)+'/יח\' · מרווח '+Math.round(margin*100)+'%';}
+  else if(margin>=0.25){vd.className='verdict v-ok';vd.innerHTML='⚠️ גבולי · רווח '+money(profit,1)+'/יח\' · מרווח '+Math.round(margin*100)+'%';}
+  else if(margin>0){vd.className='verdict v-bad';vd.innerHTML='🔻 מרווח דק מדי · רווח '+money(profit,1)+'/יח\' · '+Math.round(margin*100)+'%';}
+  else{vd.className='verdict v-bad';vd.innerHTML='❌ הפסד! עלות '+money(perUnit,1)+' > מחיר '+money(sellIls,1);}
 
-  // lines
   const modeNames={air:'✈️ אווירי',lcl:'🚢 ימי LCL',fcl:'📦 מכולה FCL'};
-  $('lines').innerHTML=`
-    <div><span>עלות מקור (מוצר+אריזה)</span><span class="v">${ils(sourceIls)}</span></div>
-    <div><span>שילוח (${modeNames[mode]})</span><span class="v">${ils(shipping)}</span></div>
-    <div><span>ביטוח</span><span class="v">${ils(insurance)}</span></div>
-    <div><span>מכס (${(dutyPct*100)}%)</span><span class="v">${ils(duty)}</span></div>
-    <div><span>מע"מ${reclaim?' (מקוזז)':''}</span><span class="v">${ils(vat)}</span></div>
-    <div><span>עלויות קבועות</span><span class="v">${ils(fixed)}</span></div>
-    <div><span><b>סה"כ השקעה</b></span><span class="v"><b>${ils(total)}</b></span></div>
-    <div class="muted"><span>משקל / נפח כולל</span><span class="v">${totKg.toLocaleString('he',{maximumFractionDigits:0})} ק"ג · ${totCbm.toFixed(1)} CBM</span></div>`;
+  $('lines').innerHTML=
+    '<div><span>עלות מקור (מוצר+אריזה)</span><span class="v">'+money(sourceIls)+'</span></div>'+
+    '<div><span>שילוח ('+modeNames[mode]+')</span><span class="v">'+money(shipping)+'</span></div>'+
+    '<div><span>ביטוח</span><span class="v">'+money(insurance)+'</span></div>'+
+    '<div><span>מכס ('+(dutyPct*100)+'%)</span><span class="v">'+money(duty)+'</span></div>'+
+    '<div><span>מע"מ'+(reclaim?' (מקוזז)':'')+'</span><span class="v">'+money(vat)+'</span></div>'+
+    '<div><span>עלויות קבועות</span><span class="v">'+money(fixedIls)+'</span></div>'+
+    '<div><span><b>סה"כ השקעה</b></span><span class="v"><b>'+money(total)+'</b></span></div>'+
+    '<div class="muted"><span>משקל / נפח כולל</span><span class="v">'+totKg.toLocaleString('he',{maximumFractionDigits:0})+' ק"ג · '+totCbm.toFixed(1)+' CBM</span></div>';
 
-  // ship note
-  let sn=`השוואה: ✈️ ${ils(airCost)} · 🚢 LCL ${ils(lclCost)} · 📦 FCL ${ils(fclCost)}`;
-  if(mode==='air'&&airChargeable>totKg)sn+=` · שים לב: חיוב אווירי לפי משקל נפחי (${Math.round(airChargeable)} ק"ג)`;
-  if(mode==='fcl')sn+=` · ${containers} מכולות · ~${Math.round(fcl20cbm/(liter/1000)).toLocaleString('he')} יח'/מכולה`;
+  let sn='השוואה: ✈️ '+money(airCost)+' · 🚢 LCL '+money(lclCost)+' · 📦 FCL '+money(fclCost);
+  if(mode==='air'&&airChargeable>totKg)sn+=' · שים לב: חיוב אווירי לפי משקל נפחי ('+Math.round(airChargeable)+' ק"ג)';
+  if(mode==='fcl')sn+=' · '+containers+' מכולות · ~'+Math.round(fcl20cbm/(liter/1000)).toLocaleString('he')+' יח\'/מכולה';
   $('shipnote').textContent=sn;
 
-  // tax warning by mode
   const tw=$('taxwarn');
-  if(mode==='air'&&sourceIls/qty*1<0 ){}
   if(mode==='fcl'||mode==='lcl'){
     tw.innerHTML='⚠️ מכולה/LCL = יבוא מסחרי: מע"מ 18% אמיתי בגבול + צריך יבואן ישראלי רשום. חברה מקסיקנית לא מקזזת מע"מ. (לא ייעוץ מס — אמת עם רו"ח.)';
   }else{
     tw.innerHTML='ℹ️ אווירי/קורייר בחבילות קטנות (<$75 ללקוח) עשוי להיות פטור ממע"מ בייבוא אישי ישיר. מכולה = מע"מ מלא. (לא ייעוץ מס.)';
   }
 }
-['price','qty','sell','fx','vat','duty','ins','airkg','lclcbm','lclfix','fcl20','fcl20cbm','fixed',
+['price','qty','sell','fxUSD','fxMXN','vat','duty','ins','airkg','lclcbm','lclfix','fcl20','fcl20cbm','fixed',
  'c_kg','c_liter','c_brk','c_pack','pname'].forEach(id=>{
   const el=$(id); if(el){el.addEventListener('input',calc);el.addEventListener('change',calc);}
 });
 $('vatreclaim').addEventListener('change',calc);
+renderLabels();
 calc();
 </script>
 </body>
