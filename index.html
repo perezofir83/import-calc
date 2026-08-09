@@ -147,12 +147,13 @@
       </div>
       <div class="row2">
         <div><label>אווירי ₪/ק"ג</label><input id="airkg" type="number" step="1" value="28"></div>
-        <div><label>LCL ₪/CBM (all-in)</label><input id="lclcbm" type="number" step="10" value="550"></div>
-      </div>
-      <div class="row2">
-        <div><label>LCL מינ' CBM</label><input id="lclmin" type="number" step="0.5" value="2"></div>
         <div><label>מכולה 20ft (₪)</label><input id="fcl20" type="number" step="500" value="16500"></div>
       </div>
+      <div class="row2">
+        <div><label>LCL עמלה קבועה (₪)</label><input id="lclfix" type="number" step="100" value="1700"></div>
+        <div><label>LCL ₪/CBM</label><input id="lclcbm" type="number" step="10" value="550"></div>
+      </div>
+      <div class="note" style="margin:2px 0 0">LCL = עמלה קבועה (רצפה ~$450: deconsolidation+THC+מסמכים) + לפי CBM. משלוחים קטנים יקרים יחסית — זו אמת השוק.</div>
       <div class="row2">
         <div><label>נפח שמיש 20ft (CBM)</label><input id="fcl20cbm" type="number" step="1" value="28"></div>
         <div><label>עלויות קבועות למשלוח (₪)</label><input id="fixed" type="number" step="100" value="3000"></div>
@@ -217,7 +218,7 @@ function calc(){
   if(p.custom){kg=num('c_kg');liter=num('c_liter');brk=num('c_brk');pack=num('c_pack');}
   const fx=num('fx'), qty=num('qty'), price=num('price'), sell=num('sell');
   const vatPct=num('vat')/100, dutyPct=num('duty')/100, insPct=num('ins')/100;
-  const airkg=num('airkg'), lclcbm=num('lclcbm'), lclmin=num('lclmin');
+  const airkg=num('airkg'), lclcbm=num('lclcbm'), lclfix=num('lclfix');
   const fcl20=num('fcl20'), fcl20cbm=num('fcl20cbm'), fixed=num('fixed');
   const reclaim=$('vatreclaim').checked;
 
@@ -228,7 +229,7 @@ function calc(){
   // shipping options
   const airChargeable=Math.max(totKg, totCbm*166.67); // volumetric /6000
   const airCost=airChargeable*airkg;
-  const lclCost=Math.max(lclmin, totCbm)*lclcbm;
+  const lclCost=lclfix + totCbm*lclcbm;
   const containers=Math.max(1, Math.ceil(totCbm/fcl20cbm));
   const fclCost=containers*fcl20;
   const opts={air:airCost, lcl:lclCost, fcl:fclCost};
@@ -283,7 +284,7 @@ function calc(){
     tw.innerHTML='ℹ️ אווירי/קורייר בחבילות קטנות (<$75 ללקוח) עשוי להיות פטור ממע"מ בייבוא אישי ישיר. מכולה = מע"מ מלא. (לא ייעוץ מס.)';
   }
 }
-['price','qty','sell','fx','vat','duty','ins','airkg','lclcbm','lclmin','fcl20','fcl20cbm','fixed',
+['price','qty','sell','fx','vat','duty','ins','airkg','lclcbm','lclfix','fcl20','fcl20cbm','fixed',
  'c_kg','c_liter','c_brk','c_pack','pname'].forEach(id=>{
   const el=$(id); if(el){el.addEventListener('input',calc);el.addEventListener('change',calc);}
 });
