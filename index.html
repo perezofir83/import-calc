@@ -191,6 +191,11 @@ const PRODUCTS = {
 };
 let curProd='cups', shipMode='auto';
 
+const $=id=>document.getElementById(id);
+const num=id=>parseFloat($(id).value)||0;
+const ils=v=>'₪'+v.toLocaleString('he',{maximumFractionDigits:0});
+const ils1=v=>'₪'+v.toLocaleString('he',{maximumFractionDigits:1});
+
 const grid=document.getElementById('prodgrid');
 Object.entries(PRODUCTS).forEach(([k,p])=>{
   const d=document.createElement('div');
@@ -205,11 +210,6 @@ Object.entries(PRODUCTS).forEach(([k,p])=>{
 function setShip(m){shipMode=m;document.querySelectorAll('.chip[data-ship]').forEach(c=>
   c.classList.toggle('sel',c.dataset.ship===m));calc();}
 setShip('auto');
-
-const $=id=>document.getElementById(id);
-const num=id=>parseFloat($(id).value)||0;
-const ils=v=>'₪'+v.toLocaleString('he',{maximumFractionDigits:0});
-const ils1=v=>'₪'+v.toLocaleString('he',{maximumFractionDigits:1});
 
 function calc(){
   const p=PRODUCTS[curProd];
